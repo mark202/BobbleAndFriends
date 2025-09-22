@@ -2,7 +2,6 @@ const canvas = document.getElementById("game");
 
 const levelNameEl = document.querySelector(".level-name");
 const shotsValueEl = document.querySelector(".shots__value");
-const shotQueueEl = document.getElementById("shot-queue");
 const starEls = [...document.querySelectorAll(".star")];
 const tooltipEl = document.getElementById("tooltip");
 const levelCompleteEl = document.getElementById("level-complete");
@@ -17,103 +16,86 @@ const advanceBtn = document.getElementById("advance-button");
 const VIRTUAL_WIDTH = 900;
 const VIRTUAL_HEIGHT = 560;
 
-const levels = [
-  {
-    name: "Misty Lily Pad Rally",
-    sling: { x: 150, y: 420 },
-    bumpers: [
-      { x: 420, y: 320, w: 120, h: 26, bounce: 1.2, angle: 0 },
-      { x: 650, y: 210, w: 30, h: 160, bounce: 1.05, angle: 0 },
-      { x: 520, y: 120, w: 200, h: 24, bounce: 1.15, angle: 0 },
-    ],
-    friends: [
-      { x: 600, y: 440, r: 26, color: "orange", collected: false },
-      { x: 690, y: 400, r: 24, color: "orange", collected: false },
-      { x: 520, y: 210, r: 24, color: "violet", collected: false },
-      { x: 720, y: 240, r: 24, color: "violet", collected: false },
-      { x: 780, y: 160, r: 24, color: "aqua", collected: false },
-      { x: 640, y: 140, r: 24, color: "aqua", collected: false },
-      { x: 760, y: 460, r: 26, color: "aqua", collected: false },
-    ],
-    shotSequence: ["orange", "violet", "aqua", "orange", "aqua", "violet"],
-    shotGoals: { three: 3, two: 5 },
-    tooltip:
-      "Launch Bobble to scoop up matching friends. Chain bounces to gather a whole color squad in one splash!",
-  },
-  {
-    name: "Lantern Lagoon Spin",
-    sling: { x: 140, y: 420 },
-    bumpers: [
-      { x: 360, y: 190, w: 220, h: 32, bounce: 1.25, angle: 0 },
-      { x: 540, y: 360, w: 180, h: 32, bounce: 1.1, angle: 0 },
-      { x: 760, y: 280, w: 32, h: 220, bounce: 1.05, angle: 0 },
-      { x: 620, y: 120, w: 160, h: 26, bounce: 1.18, angle: 0 },
-    ],
-    friends: [
-      { x: 320, y: 450, r: 24, color: "aqua", collected: false },
-      { x: 460, y: 280, r: 24, color: "violet", collected: false },
-      { x: 660, y: 120, r: 24, color: "orange", collected: false },
-      { x: 820, y: 440, r: 26, color: "aqua", collected: false },
-      { x: 720, y: 320, r: 24, color: "orange", collected: false },
-      { x: 580, y: 220, r: 24, color: "violet", collected: false },
-      { x: 780, y: 200, r: 24, color: "aqua", collected: false },
-      { x: 500, y: 440, r: 26, color: "orange", collected: false },
-    ],
-    shotSequence: [
-      "orange",
-      "aqua",
-      "violet",
-      "orange",
-      "aqua",
-      "violet",
-      "aqua",
-    ],
-    shotGoals: { three: 4, two: 6 },
-    tooltip:
-      "Bounce off mushroom bumpers to curve around the lagoon. Keep matching colors to scoop every swimmer!",
-  },
-  {
-    name: "Glowroot Grotto Parade",
-    sling: { x: 160, y: 420 },
-    bumpers: [
-      { x: 400, y: 210, w: 160, h: 32, bounce: 1.2, angle: 0 },
-      { x: 580, y: 440, w: 140, h: 32, bounce: 1.2, angle: 0 },
-      { x: 750, y: 220, w: 36, h: 200, bounce: 1.08, angle: 0 },
-      { x: 500, y: 320, w: 36, h: 200, bounce: 1.1, angle: 0 },
-      { x: 620, y: 160, w: 180, h: 26, bounce: 1.22, angle: 0 },
-    ],
-    friends: [
-      { x: 320, y: 150, r: 24, color: "orange", collected: false },
-      { x: 520, y: 460, r: 26, color: "violet", collected: false },
-      { x: 820, y: 180, r: 26, color: "aqua", collected: false },
-      { x: 760, y: 460, r: 26, color: "orange", collected: false },
-      { x: 600, y: 240, r: 24, color: "violet", collected: false },
-      { x: 700, y: 320, r: 24, color: "aqua", collected: false },
-      { x: 680, y: 420, r: 24, color: "orange", collected: false },
-      { x: 560, y: 160, r: 24, color: "violet", collected: false },
-      { x: 780, y: 120, r: 24, color: "aqua", collected: false },
-    ],
-    shotSequence: [
-      "violet",
-      "orange",
-      "aqua",
-      "violet",
-      "orange",
-      "aqua",
-      "orange",
-      "violet",
-    ],
-    shotGoals: { three: 5, two: 7 },
-    tooltip:
-      "The glowroot vines spin everyone around. Bounce wide, match colors, and parade the whole squad out!",
-  },
-];
-
 const COLORS = {
   orange: "#ffb347",
   aqua: "#7df6ff",
   violet: "#d0a2ff",
+  lime: "#baff7a",
 };
+
+const levels = [
+  {
+    name: "Splashdown Clearing",
+    shots: 8,
+    starGoals: { three: 4, two: 6, one: 8 },
+    tooltip:
+      "Pull any lounging buddy, sling them across the pool, and crash matching colors together to cheer them out!",
+    slingHint: { x: 150, y: 420 },
+    bumpers: [
+      { x: 360, y: 220, w: 160, h: 30, bounce: 1.15, angle: 0 },
+      { x: 620, y: 360, w: 220, h: 30, bounce: 1.1, angle: 0 },
+      { x: 730, y: 180, w: 30, h: 200, bounce: 1.05, angle: 0 },
+    ],
+    friends: [
+      { x: 260, y: 380, r: 28, color: "orange" },
+      { x: 380, y: 260, r: 26, color: "orange" },
+      { x: 540, y: 180, r: 24, color: "aqua" },
+      { x: 720, y: 440, r: 28, color: "aqua" },
+      { x: 620, y: 280, r: 26, color: "violet" },
+      { x: 460, y: 420, r: 26, color: "violet" },
+    ],
+  },
+  {
+    name: "Glowroot Spin",
+    shots: 9,
+    starGoals: { three: 5, two: 7, one: 9 },
+    tooltip:
+      "Bank tight curves off the mushroom bumpers. Same-color smashes pop friends right out of the swamp!",
+    slingHint: { x: 140, y: 420 },
+    bumpers: [
+      { x: 420, y: 180, w: 240, h: 34, bounce: 1.2, angle: 0 },
+      { x: 520, y: 420, w: 180, h: 30, bounce: 1.1, angle: 0 },
+      { x: 780, y: 260, w: 34, h: 220, bounce: 1.08, angle: 0 },
+      { x: 610, y: 120, w: 200, h: 30, bounce: 1.18, angle: 0 },
+    ],
+    friends: [
+      { x: 320, y: 150, r: 24, color: "lime" },
+      { x: 480, y: 260, r: 26, color: "lime" },
+      { x: 640, y: 340, r: 26, color: "aqua" },
+      { x: 760, y: 420, r: 26, color: "aqua" },
+      { x: 700, y: 180, r: 24, color: "violet" },
+      { x: 540, y: 460, r: 28, color: "violet" },
+      { x: 420, y: 340, r: 26, color: "orange" },
+      { x: 260, y: 420, r: 28, color: "orange" },
+    ],
+  },
+  {
+    name: "Lantern Parade",
+    shots: 10,
+    starGoals: { three: 6, two: 8, one: 10 },
+    tooltip:
+      "Time big ricochets through lantern gates to cascade matches. Keep someone moving until every buddy is cheering!",
+    slingHint: { x: 160, y: 420 },
+    bumpers: [
+      { x: 420, y: 220, w: 180, h: 30, bounce: 1.16, angle: 0 },
+      { x: 520, y: 420, w: 160, h: 28, bounce: 1.12, angle: 0 },
+      { x: 760, y: 220, w: 36, h: 220, bounce: 1.05, angle: 0 },
+      { x: 620, y: 140, w: 200, h: 28, bounce: 1.2, angle: 0 },
+      { x: 540, y: 300, w: 32, h: 210, bounce: 1.08, angle: 0 },
+    ],
+    friends: [
+      { x: 280, y: 160, r: 24, color: "lime" },
+      { x: 360, y: 420, r: 28, color: "lime" },
+      { x: 500, y: 220, r: 26, color: "orange" },
+      { x: 660, y: 320, r: 26, color: "orange" },
+      { x: 720, y: 160, r: 24, color: "violet" },
+      { x: 780, y: 420, r: 28, color: "violet" },
+      { x: 600, y: 460, r: 28, color: "aqua" },
+      { x: 520, y: 120, r: 24, color: "aqua" },
+      { x: 420, y: 300, r: 26, color: "orange" },
+    ],
+  },
+];
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 
@@ -124,8 +106,8 @@ class JuiceFX {
   }
 
   addShake(amount) {
-    this.shakeMagnitude = Math.min(20, this.shakeMagnitude + amount);
-    this.shakeTime = Math.min(0.45, this.shakeTime + 0.15);
+    this.shakeMagnitude = Math.min(25, this.shakeMagnitude + amount);
+    this.shakeTime = Math.min(0.5, this.shakeTime + 0.16);
   }
 
   apply(ctx) {
@@ -133,7 +115,7 @@ class JuiceFX {
       const shakeX = (Math.random() - 0.5) * 2 * this.shakeMagnitude;
       const shakeY = (Math.random() - 0.5) * 2 * this.shakeMagnitude;
       ctx.translate(shakeX, shakeY);
-      this.shakeMagnitude *= 0.88;
+      this.shakeMagnitude *= 0.9;
       this.shakeTime -= 1 / 60;
     }
   }
@@ -166,20 +148,20 @@ class SoundBoard {
     let duration = 0.25;
 
     if (type === "launch") {
-      freq = 320;
+      freq = 260;
       duration = 0.2;
     } else if (type === "hit") {
-      freq = 540;
-      duration = 0.25;
+      freq = 520;
+      duration = 0.22;
     } else if (type === "target") {
       freq = 760;
-      duration = 0.35;
+      duration = 0.32;
     }
 
     osc.type = "sine";
     osc.frequency.setValueAtTime(freq, now);
     osc.frequency.linearRampToValueAtTime(freq * 0.6, now + duration);
-    gain.gain.setValueAtTime(0.18, now);
+    gain.gain.setValueAtTime(0.2, now);
     gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
 
     osc.start(now);
@@ -195,32 +177,21 @@ class Game {
 
     this.levelIndex = 0;
     this.level = null;
+    this.friends = [];
+    this.effects = [];
 
-    this.ball = {
-      radius: 22,
-      pos: { x: 0, y: 0 },
-      vel: { x: 0, y: 0 },
-      aiming: false,
-      launched: false,
-      stretch: 1,
-      trail: [],
-      color: null,
-      carrying: [],
-    };
+    this.shotsUsed = 0;
+    this.levelComplete = false;
 
-    this.shotQueue = [];
-    this.currentShotColor = null;
-    this.shotsTaken = 0;
-
-    this.lastTimestamp = 0;
-    this.resetTimer = 0;
     this.pointerId = null;
     this.pointerPos = { x: 0, y: 0 };
+    this.selectedFriend = null;
+
+    this.lastTimestamp = 0;
+    this.animation = null;
 
     this.fx = new JuiceFX();
     this.sound = new SoundBoard();
-
-    this.animation = null;
 
     this.initEvents();
     this.resize();
@@ -233,12 +204,6 @@ class Game {
     this.canvas.addEventListener("pointerdown", (event) => this.onPointerDown(event));
     this.canvas.addEventListener("pointermove", (event) => this.onPointerMove(event));
     window.addEventListener("pointerup", (event) => this.onPointerUp(event));
-
-    window.addEventListener("keydown", (event) => {
-      if (event.code === "Space") {
-        this.resetBall();
-      }
-    });
 
     resetLevelBtn.addEventListener("click", () => this.startLevel(this.levelIndex));
     nextLevelBtn.addEventListener("click", () =>
@@ -262,148 +227,131 @@ class Game {
   startLevel(index) {
     this.levelIndex = index;
     this.level = JSON.parse(JSON.stringify(levels[index]));
-    this.shotQueue = [...this.level.shotSequence];
-    this.currentShotColor = null;
-    this.shotsTaken = 0;
-    this.pointerId = null;
+    this.friends = this.level.friends.map((friend, id) => ({
+      id,
+      color: friend.color,
+      radius: friend.r,
+      pos: { x: friend.x, y: friend.y },
+      anchor: { x: friend.x, y: friend.y },
+      dragPos: { x: friend.x, y: friend.y },
+      vel: { x: 0, y: 0 },
+      aiming: false,
+      removed: false,
+      isMoving: false,
+    }));
 
-    this.ball.pos = { ...this.level.sling };
-    this.ball.vel = { x: 0, y: 0 };
-    this.ball.aiming = false;
-    this.ball.launched = false;
-    this.ball.trail = [];
-    this.ball.stretch = 1;
-    this.ball.carrying = [];
-    this.ball.color = null;
+    this.effects = [];
+    this.shotsUsed = 0;
+    this.levelComplete = false;
+    this.pointerId = null;
+    this.selectedFriend = null;
 
     levelNameEl.textContent = `Level ${index + 1}: ${this.level.name}`;
-    starEls.forEach((el) => el.classList.remove("active"));
     tooltipEl.textContent = this.level.tooltip;
     levelCompleteEl.classList.remove("visible");
+    starEls.forEach((el) => el.classList.remove("active"));
 
-    this.prepareNextShot();
+    this.updateShots();
 
     cancelAnimationFrame(this.animation);
     this.lastTimestamp = performance.now();
     this.animation = requestAnimationFrame((timestamp) => this.loop(timestamp));
   }
 
-  prepareNextShot() {
-    if (this.level.friends.every((friend) => friend.collected)) {
-      return false;
-    }
-
-    if (this.shotQueue.length === 0) {
-      this.updateShotHUD();
-      return false;
-    }
-
-    this.currentShotColor = this.shotQueue.shift();
-    this.ball.color = this.currentShotColor;
-    this.ball.pos = { ...this.level.sling };
-    this.ball.vel = { x: 0, y: 0 };
-    this.ball.aiming = false;
-    this.ball.launched = false;
-    this.ball.trail = [];
-    this.ball.stretch = 1;
-    this.ball.carrying = [];
-    this.pointerId = null;
-    this.pointerPos = { ...this.level.sling };
-
-    this.updateShotHUD();
-    return true;
-  }
-
-  updateShotHUD() {
-    const reserveShots =
-      this.shotQueue.length + (this.ball.launched || !this.ball.color ? 0 : 1);
-    shotsValueEl.textContent = reserveShots;
-
-    if (!shotQueueEl) return;
-
-    const chips = [];
-    if (!this.ball.launched && this.ball.color) {
-      chips.push({ color: this.ball.color, current: true });
-    }
-    this.shotQueue.forEach((color) => chips.push({ color, current: false }));
-
-    if (chips.length === 0) {
-      shotQueueEl.innerHTML = '<span class="shot-chip shot-chip--empty">—</span>';
-      return;
-    }
-
-    shotQueueEl.innerHTML = chips
-      .map((chip) => {
-        const color = COLORS[chip.color] || "#fff";
-        const classes = ["shot-chip"];
-        if (chip.current) classes.push("shot-chip--current");
-        return `<span class="${classes.join(" ")}" style="--chip-color: ${color}"></span>`;
-      })
-      .join("");
-  }
-
-  showOutOfShots() {
-    levelCompleteEl.classList.add("visible");
-    levelCompleteMessage.textContent =
-      "Out of splashes! Bobble will rally the crew and try again.";
-    levelCompleteStars.textContent = "☆☆☆";
+  updateShots() {
+    const shotsLeft = Math.max(this.level.shots - this.shotsUsed, 0);
+    shotsValueEl.textContent = shotsLeft;
   }
 
   onPointerDown(event) {
+    if (this.levelComplete) return;
     if (this.pointerId !== null && this.pointerId !== event.pointerId) return;
+
     const rect = this.canvas.getBoundingClientRect();
     const x = (event.clientX - rect.left) / this.scale;
     const y = (event.clientY - rect.top) / this.scale;
 
-    const dx = x - this.ball.pos.x;
-    const dy = y - this.ball.pos.y;
-    const distance = Math.hypot(dx, dy);
+    const friend = this.findFriendAt(x, y);
+    if (!friend || !this.canDrag(friend)) return;
 
-    if (distance <= this.ball.radius * 2 && !this.ball.launched && this.ball.color) {
-      this.pointerId = event.pointerId;
-      this.ball.aiming = true;
-      this.pointerPos = { x, y };
-      this.sound.play("launch");
-    }
+    this.pointerId = event.pointerId;
+    this.pointerPos = { x, y };
+    this.selectedFriend = friend;
+    friend.aiming = true;
+    friend.dragPos = { x, y };
   }
 
   onPointerMove(event) {
-    if (this.pointerId !== event.pointerId || !this.ball.aiming) return;
+    if (!this.selectedFriend || this.pointerId !== event.pointerId) return;
+
     const rect = this.canvas.getBoundingClientRect();
     const x = (event.clientX - rect.left) / this.scale;
     const y = (event.clientY - rect.top) / this.scale;
+
     this.pointerPos = { x, y };
+    const friend = this.selectedFriend;
+    const anchor = friend.anchor;
+    const dx = x - anchor.x;
+    const dy = y - anchor.y;
+    const pull = Math.min(Math.hypot(dx, dy), 170);
+    const angle = Math.atan2(dy, dx) || 0;
+    friend.dragPos = {
+      x: anchor.x + Math.cos(angle) * pull,
+      y: anchor.y + Math.sin(angle) * pull,
+    };
   }
 
   onPointerUp(event) {
-    if (this.pointerId !== event.pointerId || !this.ball.aiming) return;
+    if (!this.selectedFriend || this.pointerId !== event.pointerId) return;
 
+    const friend = this.selectedFriend;
+    const anchor = friend.anchor;
+    const dx = anchor.x - friend.dragPos.x;
+    const dy = anchor.y - friend.dragPos.y;
+    const pull = Math.hypot(dx, dy);
+
+    friend.aiming = false;
+    friend.dragPos = { ...anchor };
     this.pointerId = null;
-    this.ball.aiming = false;
+    this.selectedFriend = null;
 
-    const sling = this.level.sling;
-    const pullX = sling.x - this.pointerPos.x;
-    const pullY = sling.y - this.pointerPos.y;
-    const pullLength = Math.hypot(pullX, pullY);
-
-    if (pullLength < 10) {
-      this.ball.pos = { ...sling };
+    if (pull < 8) {
       return;
     }
 
-    const maxPull = 180;
-    const clamped = Math.min(pullLength, maxPull);
-    const power = clamped * 0.035;
+    const power = clamp(pull * 9.5, 0, 1600);
+    const normX = dx / pull;
+    const normY = dy / pull;
+    friend.pos = { ...anchor };
+    friend.vel.x = normX * power;
+    friend.vel.y = normY * power;
+    friend.isMoving = true;
 
-    const vx = (pullX / pullLength) * power * 28;
-    const vy = (pullY / pullLength) * power * 28;
+    this.sound.play("launch");
+    this.fx.addShake(4);
 
-    this.ball.vel.x = vx;
-    this.ball.vel.y = vy;
-    this.ball.launched = true;
-    this.shotsTaken += 1;
-    this.currentShotColor = null;
-    this.updateShotHUD();
+    this.shotsUsed += 1;
+    this.updateShots();
+  }
+
+  findFriendAt(x, y) {
+    for (let i = this.friends.length - 1; i >= 0; i -= 1) {
+      const friend = this.friends[i];
+      if (friend.removed) continue;
+      const renderPos = friend.aiming ? friend.dragPos : friend.pos;
+      const dx = x - renderPos.x;
+      const dy = y - renderPos.y;
+      if (Math.hypot(dx, dy) <= friend.radius * 1.25) {
+        return friend;
+      }
+    }
+    return null;
+  }
+
+  canDrag(friend) {
+    if (friend.removed || friend.aiming) return false;
+    const speed = Math.hypot(friend.vel.x, friend.vel.y);
+    return speed < 25;
   }
 
   loop(timestamp) {
@@ -417,244 +365,227 @@ class Game {
   }
 
   update(dt) {
-    if (this.ball.launched) {
-      this.integrateBall(dt);
-      this.handleCollisions();
-      this.handleFriends();
-      this.updateCarriedFriends(dt);
-      this.updateTrail();
-
-      const speed = Math.hypot(this.ball.vel.x, this.ball.vel.y);
-      if (speed < 15) {
-        this.resetTimer = (this.resetTimer || 0) + dt;
-      } else {
-        this.resetTimer = 0;
-      }
-
-      if (this.resetTimer > 1.1 || this.isBallOutOfBounds()) {
-        this.resetBall();
-      }
-    } else {
-      this.resetTimer = 0;
-      this.updateTrail(true);
-      this.updateCarriedFriends(dt);
-    }
-
-    if (this.ball.aiming) {
-      const sling = this.level.sling;
-      const pullX = sling.x - this.pointerPos.x;
-      const pullY = sling.y - this.pointerPos.y;
-      const pullLength = Math.hypot(pullX, pullY);
-      const maxPull = 200;
-      const stretchFactor = 1 + clamp(pullLength / maxPull, 0, 1) * 0.9;
-      this.ball.stretch = stretchFactor;
-    } else {
-      this.ball.stretch = 1;
-    }
-  }
-
-  integrateBall(dt) {
-    const gravity = 280;
-    this.ball.vel.y += gravity * dt;
-
-    this.ball.pos.x += this.ball.vel.x * dt;
-    this.ball.pos.y += this.ball.vel.y * dt;
-
-    // Apply damping to mimic swamp water resistance.
-    this.ball.vel.x *= 0.992;
-    this.ball.vel.y *= 0.992;
-  }
-
-  updateTrail(reset = false) {
-    if (reset) {
-      this.ball.trail = [];
-      return;
-    }
-    this.ball.trail.unshift({ x: this.ball.pos.x, y: this.ball.pos.y, life: 1 });
-    if (this.ball.trail.length > 25) this.ball.trail.pop();
-    this.ball.trail.forEach((node, index) => {
-      node.life = 1 - index / this.ball.trail.length;
+    this.friends.forEach((friend) => {
+      if (friend.removed || friend.aiming) return;
+      this.integrateFriend(friend, dt);
+      this.handleWalls(friend);
+      this.handleBumpers(friend);
     });
+
+    this.handleFriendCollisions();
+    this.updateEffects(dt);
+
+    if (!this.levelComplete && this.isLevelCleared()) {
+      this.finishLevel(true);
+    }
+
+    if (
+      !this.levelComplete &&
+      this.shotsUsed >= this.level.shots &&
+      !this.isLevelCleared() &&
+      this.allFriendsIdle()
+    ) {
+      this.finishLevel(false);
+    }
   }
 
-  handleCollisions() {
-    const ball = this.ball;
-    const radius = ball.radius;
+  integrateFriend(friend, dt) {
+    friend.pos.x += friend.vel.x * dt;
+    friend.pos.y += friend.vel.y * dt;
 
-    // Walls
-    if (ball.pos.x - radius < 0) {
-      ball.pos.x = radius;
-      ball.vel.x *= -0.85;
+    friend.vel.x *= 0.985;
+    friend.vel.y *= 0.985;
+
+    const speed = Math.hypot(friend.vel.x, friend.vel.y);
+    if (speed < 12) {
+      friend.vel.x = 0;
+      friend.vel.y = 0;
+      friend.isMoving = false;
+    } else {
+      friend.isMoving = true;
+    }
+  }
+
+  handleWalls(friend) {
+    const radius = friend.radius;
+
+    if (friend.pos.x - radius < 0) {
+      friend.pos.x = radius;
+      friend.vel.x *= -0.85;
+      this.fx.addShake(4);
+      this.sound.play("hit");
+    } else if (friend.pos.x + radius > VIRTUAL_WIDTH) {
+      friend.pos.x = VIRTUAL_WIDTH - radius;
+      friend.vel.x *= -0.85;
+      this.fx.addShake(4);
+      this.sound.play("hit");
+    }
+
+    if (friend.pos.y - radius < 0) {
+      friend.pos.y = radius;
+      friend.vel.y *= -0.82;
+      this.fx.addShake(5);
+      this.sound.play("hit");
+    } else if (friend.pos.y + radius > VIRTUAL_HEIGHT) {
+      friend.pos.y = VIRTUAL_HEIGHT - radius;
+      friend.vel.y *= -0.82;
+      this.fx.addShake(5);
+      this.sound.play("hit");
+    }
+  }
+
+  handleBumpers(friend) {
+    this.level.bumpers.forEach((rect) => {
+      const collision = this.circleRectCollision(friend.pos, friend.radius, rect);
+      if (!collision) return;
+
+      friend.pos.x += collision.normal.x * collision.depth;
+      friend.pos.y += collision.normal.y * collision.depth;
+
+      const dot =
+        friend.vel.x * collision.normal.x + friend.vel.y * collision.normal.y;
+      friend.vel.x -= 2 * dot * collision.normal.x;
+      friend.vel.y -= 2 * dot * collision.normal.y;
+      friend.vel.x *= rect.bounce || 1.0;
+      friend.vel.y *= rect.bounce || 1.0;
+
       this.fx.addShake(6);
       this.sound.play("hit");
-    } else if (ball.pos.x + radius > VIRTUAL_WIDTH) {
-      ball.pos.x = VIRTUAL_WIDTH - radius;
-      ball.vel.x *= -0.85;
-      this.fx.addShake(6);
-      this.sound.play("hit");
-    }
+    });
+  }
 
-    if (ball.pos.y - radius < 0) {
-      ball.pos.y = radius;
-      ball.vel.y *= -0.8;
-      this.fx.addShake(7);
-      this.sound.play("hit");
-    } else if (ball.pos.y + radius > VIRTUAL_HEIGHT) {
-      ball.pos.y = VIRTUAL_HEIGHT - radius;
-      ball.vel.y *= -0.8;
-      this.fx.addShake(7);
-      this.sound.play("hit");
-    }
+  circleRectCollision(circlePos, radius, rect) {
+    const closestX = clamp(circlePos.x, rect.x - rect.w / 2, rect.x + rect.w / 2);
+    const closestY = clamp(circlePos.y, rect.y - rect.h / 2, rect.y + rect.h / 2);
 
-    // Bumpers
-    const objects = [...this.level.bumpers];
+    const dx = circlePos.x - closestX;
+    const dy = circlePos.y - closestY;
+    const distanceSq = dx * dx + dy * dy;
+    const radiusSq = radius * radius;
 
-    objects.forEach((rect) => {
-      const collision = this.circleRectCollision(ball.pos, radius, rect);
-      if (collision) {
-        const bounce = rect.bounce || (rect.gate ? 0.7 : 1.0);
-        ball.pos.x += collision.normal.x * collision.depth;
-        ball.pos.y += collision.normal.y * collision.depth;
+    if (distanceSq > radiusSq) return null;
 
-        const dot = ball.vel.x * collision.normal.x + ball.vel.y * collision.normal.y;
-        ball.vel.x -= 2 * dot * collision.normal.x;
-        ball.vel.y -= 2 * dot * collision.normal.y;
-        ball.vel.x *= bounce;
-        ball.vel.y *= bounce;
-        this.fx.addShake(5 + Math.abs(dot) * 0.02);
+    const distance = Math.sqrt(distanceSq) || 0.0001;
+    const depth = radius - distance;
+    return {
+      normal: { x: dx / distance, y: dy / distance },
+      depth,
+    };
+  }
+
+  handleFriendCollisions() {
+    for (let i = 0; i < this.friends.length; i += 1) {
+      const a = this.friends[i];
+      if (a.removed || a.aiming) continue;
+      for (let j = i + 1; j < this.friends.length; j += 1) {
+        const b = this.friends[j];
+        if (b.removed || b.aiming) continue;
+
+        const dx = b.pos.x - a.pos.x;
+        const dy = b.pos.y - a.pos.y;
+        const distSq = dx * dx + dy * dy;
+        const minDist = a.radius + b.radius;
+        if (distSq >= minDist * minDist) continue;
+
+        if (a.color === b.color) {
+          this.combineFriends(a, b);
+          continue;
+        }
+
+        const dist = Math.sqrt(distSq) || 0.0001;
+        const nx = dx / dist;
+        const ny = dy / dist;
+        const overlap = minDist - dist;
+
+        a.pos.x -= nx * overlap * 0.5;
+        a.pos.y -= ny * overlap * 0.5;
+        b.pos.x += nx * overlap * 0.5;
+        b.pos.y += ny * overlap * 0.5;
+
+        const relVelX = b.vel.x - a.vel.x;
+        const relVelY = b.vel.y - a.vel.y;
+        const relSpeed = relVelX * nx + relVelY * ny;
+
+        if (relSpeed < 0) {
+          const impulse = -(1.1) * relSpeed;
+          const impulseX = impulse * nx;
+          const impulseY = impulse * ny;
+
+          a.vel.x -= impulseX;
+          a.vel.y -= impulseY;
+          b.vel.x += impulseX;
+          b.vel.y += impulseY;
+        }
+
+        a.isMoving = true;
+        b.isMoving = true;
+        this.fx.addShake(3);
         this.sound.play("hit");
       }
-    });
-  }
-
-  circleRectCollision(center, radius, rect) {
-    const halfW = rect.w / 2;
-    const halfH = rect.h / 2;
-    const closestX = clamp(center.x, rect.x - halfW, rect.x + halfW);
-    const closestY = clamp(center.y, rect.y - halfH, rect.y + halfH);
-
-    const dx = center.x - closestX;
-    const dy = center.y - closestY;
-    const distSq = dx * dx + dy * dy;
-
-    if (distSq > radius * radius) {
-      return null;
-    }
-
-    const distance = Math.sqrt(distSq) || 0.0001;
-    const depth = radius - distance + 0.5;
-    const normal = { x: dx / distance, y: dy / distance };
-    return { normal, depth };
-  }
-
-  handleFriends() {
-    const ball = this.ball;
-    let collectedThisFrame = false;
-
-    this.level.friends.forEach((friend) => {
-      if (friend.collected) return;
-
-      const dx = ball.pos.x - friend.x;
-      const dy = ball.pos.y - friend.y;
-      const distance = Math.hypot(dx, dy) || 0.0001;
-      const minDist = ball.radius + friend.r;
-
-      if (distance > minDist) {
-        return;
-      }
-
-      const normal = { x: dx / distance, y: dy / distance };
-      const overlap = minDist - distance;
-
-      if (friend.color === ball.color) {
-        friend.collected = true;
-        collectedThisFrame = true;
-        this.fx.addShake(12);
-        this.sound.play("target");
-
-        ball.pos.x += normal.x * overlap * 0.5;
-        ball.pos.y += normal.y * overlap * 0.5;
-
-        const speedBoost = 1.1;
-        ball.vel.x *= speedBoost;
-        ball.vel.y *= speedBoost;
-
-        const spin = 2 + Math.random() * 3;
-        this.ball.carrying.push({
-          color: friend.color,
-          angle: Math.random() * Math.PI * 2,
-          distance: ball.radius + 12 + Math.random() * 8,
-          spin: Math.random() < 0.5 ? spin : -spin,
-        });
-      } else {
-        // Bounce away from different-colored friends
-        ball.pos.x += normal.x * overlap;
-        ball.pos.y += normal.y * overlap;
-        const dot = ball.vel.x * normal.x + ball.vel.y * normal.y;
-        ball.vel.x -= 2 * dot * normal.x;
-        ball.vel.y -= 2 * dot * normal.y;
-        ball.vel.x *= 0.92;
-        ball.vel.y *= 0.92;
-        this.fx.addShake(6);
-        this.sound.play("hit");
-      }
-    });
-
-    if (collectedThisFrame && this.level.friends.every((f) => f.collected)) {
-      this.finishLevel();
     }
   }
 
-  updateCarriedFriends(dt) {
-    this.ball.carrying.forEach((friend) => {
-      friend.angle += friend.spin * dt;
+  combineFriends(a, b) {
+    a.removed = true;
+    b.removed = true;
+    a.vel.x = 0;
+    a.vel.y = 0;
+    b.vel.x = 0;
+    b.vel.y = 0;
+    this.fx.addShake(10);
+    this.sound.play("target");
+
+    const centerX = (a.pos.x + b.pos.x) / 2;
+    const centerY = (a.pos.y + b.pos.y) / 2;
+    const color = COLORS[a.color] || "#ffffff";
+
+    this.effects.push({
+      x: centerX,
+      y: centerY,
+      color,
+      radius: Math.max(a.radius, b.radius) * 2.1,
+      life: 0.6,
+      maxLife: 0.6,
     });
   }
 
-  finishLevel() {
-    if (levelCompleteEl.classList.contains("visible")) return;
-
-    this.ball.launched = false;
-    this.ball.vel = { x: 0, y: 0 };
-    this.ball.carrying = [];
-    this.ball.color = null;
-    this.currentShotColor = null;
-    this.shotQueue = [];
-    this.updateShotHUD();
-
-    const stars = this.calculateStars();
-    starEls.forEach((el, index) => {
-      if (index < stars) {
-        el.classList.add("active");
-      }
+  updateEffects(dt) {
+    this.effects.forEach((effect) => {
+      effect.life -= dt;
     });
+    this.effects = this.effects.filter((effect) => effect.life > 0);
+  }
 
-    levelCompleteEl.classList.add("visible");
-    levelCompleteMessage.textContent =
-      "You rallied every friend! Bobble starts a swamp conga in celebration.";
-    levelCompleteStars.textContent = "★".repeat(stars) + "☆".repeat(3 - stars);
+  isLevelCleared() {
+    return this.friends.every((friend) => friend.removed);
+  }
+
+  allFriendsIdle() {
+    return this.friends.every((friend) => friend.removed || (!friend.aiming && !friend.isMoving));
   }
 
   calculateStars() {
-    const goals = this.level.shotGoals;
-    if (this.shotsTaken <= goals.three) return 3;
-    if (this.shotsTaken <= goals.two) return 2;
+    if (!this.level.starGoals) return 3;
+    if (this.shotsUsed <= this.level.starGoals.three) return 3;
+    if (this.shotsUsed <= this.level.starGoals.two) return 2;
+    if (this.shotsUsed <= this.level.starGoals.one) return 1;
     return 1;
   }
 
-  isBallOutOfBounds() {
-    const { x, y } = this.ball.pos;
-    return x < -200 || x > VIRTUAL_WIDTH + 200 || y > VIRTUAL_HEIGHT + 200;
-  }
+  finishLevel(success) {
+    this.levelComplete = true;
+    levelCompleteEl.classList.add("visible");
 
-  resetBall() {
-    if (this.level.friends.every((friend) => friend.collected)) return;
-
-    this.ball.carrying = [];
-    this.ball.launched = false;
-    this.ball.vel = { x: 0, y: 0 };
-    if (!this.prepareNextShot()) {
-      this.showOutOfShots();
+    if (success) {
+      const stars = this.calculateStars();
+      levelCompleteMessage.textContent = `Everyone's out! Shots used: ${this.shotsUsed}.`;
+      levelCompleteStars.textContent = "★".repeat(stars) + "☆".repeat(3 - stars);
+      starEls.forEach((el, index) => {
+        el.classList.toggle("active", index < stars);
+      });
+    } else {
+      levelCompleteMessage.textContent = "Out of shots! Give the crew another go.";
+      levelCompleteStars.textContent = "☆☆☆";
     }
   }
 
@@ -662,24 +593,31 @@ class Game {
     const ctx = this.ctx;
     ctx.save();
     ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
     ctx.scale(this.scale, this.scale);
 
     this.drawBackground(ctx);
     this.fx.apply(ctx);
-    this.drawLevel(ctx);
-    this.drawBall(ctx);
+    this.drawBumpers(ctx);
+    this.drawSlingHint(ctx);
+    this.drawEffects(ctx);
+
+    this.friends.forEach((friend) => {
+      if (friend.removed) return;
+      this.drawFriend(ctx, friend);
+    });
 
     ctx.restore();
   }
 
   drawBackground(ctx) {
     const gradient = ctx.createLinearGradient(0, 0, 0, VIRTUAL_HEIGHT);
-    gradient.addColorStop(0, "#083034");
-    gradient.addColorStop(1, "#021416");
+    gradient.addColorStop(0, "#0b292e");
+    gradient.addColorStop(1, "#02171b");
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
 
-    ctx.strokeStyle = "rgba(102, 242, 199, 0.08)";
+    ctx.strokeStyle = "rgba(125, 246, 255, 0.06)";
     ctx.lineWidth = 1;
     for (let y = 40; y < VIRTUAL_HEIGHT; y += 40) {
       ctx.beginPath();
@@ -689,32 +627,12 @@ class Game {
     }
   }
 
-  drawLevel(ctx) {
-    // Draw sling base
-    ctx.strokeStyle = "rgba(102, 242, 199, 0.4)";
-    ctx.lineWidth = 6;
-    const sling = this.level.sling;
-    ctx.beginPath();
-    ctx.moveTo(sling.x - 20, sling.y + 40);
-    ctx.lineTo(sling.x, sling.y);
-    ctx.lineTo(sling.x + 20, sling.y + 40);
-    ctx.stroke();
-
-    if (this.ball.aiming) {
-      ctx.strokeStyle = "rgba(125, 246, 255, 0.6)";
-      ctx.lineWidth = 5;
-      ctx.beginPath();
-      ctx.moveTo(sling.x, sling.y);
-      ctx.lineTo(this.pointerPos.x, this.pointerPos.y);
-      ctx.stroke();
-    }
-
-    // Bumpers
+  drawBumpers(ctx) {
     this.level.bumpers.forEach((bumper) => {
       ctx.save();
       ctx.translate(bumper.x, bumper.y);
-      ctx.fillStyle = "rgba(125, 246, 255, 0.25)";
-      ctx.strokeStyle = "rgba(125, 246, 255, 0.65)";
+      ctx.fillStyle = "rgba(125, 246, 255, 0.18)";
+      ctx.strokeStyle = "rgba(125, 246, 255, 0.6)";
       ctx.lineWidth = 3;
       ctx.beginPath();
       ctx.rect(-bumper.w / 2, -bumper.h / 2, bumper.w, bumper.h);
@@ -722,121 +640,83 @@ class Game {
       ctx.stroke();
       ctx.restore();
     });
-
-    // Friends floating in the pool
-    this.level.friends.forEach((friend) => {
-      if (friend.collected) return;
-      ctx.save();
-      ctx.translate(friend.x, friend.y);
-      const color = COLORS[friend.color] || "#ffffff";
-      const glow = ctx.createRadialGradient(0, 0, 0, 0, 0, friend.r * 1.4);
-      glow.addColorStop(0, `${color}ff`);
-      glow.addColorStop(1, `${color}00`);
-      ctx.globalAlpha = 0.8;
-      ctx.fillStyle = glow;
-      ctx.beginPath();
-      ctx.arc(0, 0, friend.r * 1.4, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      ctx.arc(0, 0, friend.r, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.lineWidth = 4;
-      ctx.strokeStyle = "rgba(0, 0, 0, 0.35)";
-      ctx.stroke();
-      ctx.restore();
-    });
   }
 
-  drawBall(ctx) {
-    const ball = this.ball;
-    const baseColor = COLORS[ball.color] || "#66f2c7";
-    const gradient = ctx.createRadialGradient(
-      ball.pos.x - 5,
-      ball.pos.y - 5,
-      4,
-      ball.pos.x,
-      ball.pos.y,
-      ball.radius * 1.2
-    );
-    gradient.addColorStop(0, "#ffffff");
-    gradient.addColorStop(1, baseColor);
+  drawSlingHint(ctx) {
+    if (!this.level.slingHint) return;
+    const sling = this.level.slingHint;
+    ctx.strokeStyle = "rgba(125, 246, 255, 0.3)";
+    ctx.lineWidth = 5;
+    ctx.beginPath();
+    ctx.moveTo(sling.x - 26, sling.y + 44);
+    ctx.lineTo(sling.x, sling.y);
+    ctx.lineTo(sling.x + 26, sling.y + 44);
+    ctx.stroke();
+  }
 
-    // Trail
-    ball.trail.forEach((node) => {
-      ctx.globalAlpha = node.life * 0.5;
+  drawFriend(ctx, friend) {
+    const renderPos = friend.aiming ? friend.dragPos : friend.pos;
+    const color = COLORS[friend.color] || "#ffffff";
+
+    if (friend.aiming) {
+      ctx.strokeStyle = `${color}80`;
+      ctx.lineWidth = 4;
       ctx.beginPath();
-      ctx.arc(node.x, node.y, ball.radius * (0.6 + node.life * 0.2), 0, Math.PI * 2);
-      ctx.fillStyle = baseColor;
-      ctx.fill();
-    });
-    ctx.globalAlpha = 1;
-
-    // Carrying friends orbiting Bobble
-    this.ball.carrying.forEach((friend) => {
-      const fx = ball.pos.x + Math.cos(friend.angle) * friend.distance;
-      const fy = ball.pos.y + Math.sin(friend.angle) * friend.distance;
-      const friendColor = COLORS[friend.color] || baseColor;
-
-      ctx.globalAlpha = 0.6;
-      ctx.beginPath();
-      ctx.arc(fx, fy, ball.radius * 0.9, 0, Math.PI * 2);
-      ctx.fillStyle = `${friendColor}40`;
-      ctx.fill();
-
-      ctx.globalAlpha = 1;
-      ctx.beginPath();
-      ctx.arc(fx, fy, ball.radius * 0.55, 0, Math.PI * 2);
-      ctx.fillStyle = friendColor;
-      ctx.fill();
-      ctx.lineWidth = 3;
-      ctx.strokeStyle = "rgba(0, 0, 0, 0.35)";
+      ctx.moveTo(friend.anchor.x, friend.anchor.y);
+      ctx.lineTo(renderPos.x, renderPos.y);
       ctx.stroke();
-    });
-
-    ctx.save();
-    ctx.translate(ball.pos.x, ball.pos.y);
-    if (this.ball.aiming) {
-      const angle = Math.atan2(ball.pos.y - this.pointerPos.y, ball.pos.x - this.pointerPos.x);
-      ctx.rotate(angle);
-    } else if (ball.launched) {
-      const angle = Math.atan2(ball.vel.y, ball.vel.x);
-      ctx.rotate(angle + Math.PI / 2);
     }
 
-    ctx.scale(1, this.ball.stretch);
+    ctx.save();
+    ctx.translate(renderPos.x, renderPos.y);
 
-    ctx.fillStyle = gradient;
+    const glow = ctx.createRadialGradient(0, 0, 0, 0, 0, friend.radius * 1.5);
+    glow.addColorStop(0, `${color}`);
+    glow.addColorStop(1, `${color}00`);
+    ctx.globalAlpha = 0.7;
+    ctx.fillStyle = glow;
     ctx.beginPath();
-    ctx.ellipse(0, 0, ball.radius, ball.radius * 0.9, 0, 0, Math.PI * 2);
+    ctx.arc(0, 0, friend.radius * 1.6, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.globalAlpha = 1;
+    const bodyGradient = ctx.createRadialGradient(-4, -6, 4, 0, 0, friend.radius * 1.1);
+    bodyGradient.addColorStop(0, "#ffffff");
+    bodyGradient.addColorStop(1, color);
+
+    ctx.fillStyle = bodyGradient;
+    ctx.beginPath();
+    ctx.arc(0, 0, friend.radius, 0, Math.PI * 2);
     ctx.fill();
 
     ctx.lineWidth = 4;
     ctx.strokeStyle = "rgba(0, 0, 0, 0.35)";
-    ctx.beginPath();
-    ctx.arc(0, 0, ball.radius - 3, 0, Math.PI * 2);
     ctx.stroke();
 
-    // Bobble's face
-    ctx.fillStyle = "#052827";
-    ctx.beginPath();
-    ctx.arc(-6, -4, 4.5, 0, Math.PI * 2);
-    ctx.arc(6, -4, 4.5, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = "#fff";
-    ctx.beginPath();
-    ctx.arc(-5.5, -4.5, 2.2, 0, Math.PI * 2);
-    ctx.arc(6.5, -4.5, 2.2, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = "#052827";
-    ctx.beginPath();
-    ctx.arc(0, 6, 6, 0, Math.PI);
-    ctx.fill();
+    if (!friend.isMoving && !friend.aiming) {
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = `${color}80`;
+      ctx.setLineDash([6, 6]);
+      ctx.beginPath();
+      ctx.arc(0, 0, friend.radius + 6, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
     ctx.restore();
+  }
+
+  drawEffects(ctx) {
+    this.effects.forEach((effect) => {
+      const progress = effect.life / effect.maxLife;
+      ctx.globalAlpha = progress;
+      ctx.fillStyle = effect.color;
+      ctx.beginPath();
+      ctx.arc(effect.x, effect.y, effect.radius * (1 + (1 - progress) * 0.6), 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    });
   }
 }
 
+// eslint-disable-next-line no-new
 new Game(canvas);

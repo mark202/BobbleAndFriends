@@ -23,6 +23,54 @@ const COLORS = {
   lime: "#baff7a",
 };
 
+const FRIEND_ROSTER = [
+  {
+    name: "Bobble",
+    primary: "#f5f2ed",
+    stripe: "#323c46",
+    belly: "#fff8eb",
+    accent: "#ffcc6f",
+    eye: "#2a1f1c",
+    nose: "#44313a",
+  },
+  {
+    name: "Mila",
+    primary: "#f6d8ff",
+    stripe: "#8a4fd7",
+    belly: "#ffe9ff",
+    accent: "#ff9df6",
+    eye: "#2c1740",
+    nose: "#602e84",
+  },
+  {
+    name: "Rufus",
+    primary: "#ffe3c4",
+    stripe: "#b45f2a",
+    belly: "#fff4dc",
+    accent: "#ffba7b",
+    eye: "#3b2016",
+    nose: "#4a2612",
+  },
+  {
+    name: "Tika",
+    primary: "#d9ffe0",
+    stripe: "#3a8f4f",
+    belly: "#f2fff5",
+    accent: "#9dffbd",
+    eye: "#163221",
+    nose: "#255a38",
+  },
+  {
+    name: "Gogo",
+    primary: "#e3f4ff",
+    stripe: "#2c6c8d",
+    belly: "#f3fbff",
+    accent: "#7dd6ff",
+    eye: "#163040",
+    nose: "#1d4a61",
+  },
+];
+
 const levels = [
   {
     name: "Splashdown Clearing",
@@ -31,6 +79,18 @@ const levels = [
     tooltip:
       "Pull any lounging buddy, sling them across the pool, and crash matching colors together to cheer them out!",
     slingHint: { x: 150, y: 420 },
+    walls: [
+      { x: 60, y: 80, w: 120, h: 28 },
+      { x: 140, y: 520, w: 220, h: 30 },
+      { x: 860, y: 120, w: 80, h: 28 },
+      { x: 780, y: 500, w: 190, h: 30 },
+      { x: 450, y: 520, w: 280, h: 26 },
+      { x: 40, y: 320, w: 70, h: 200 },
+      { x: 860, y: 360, w: 70, h: 210 },
+      { x: 320, y: 80, w: 220, h: 26 },
+      { x: 620, y: 70, w: 180, h: 24 },
+      { x: 420, y: 300, w: 28, h: 160 },
+    ],
     bumpers: [
       { x: 360, y: 220, w: 160, h: 30, bounce: 1.15, angle: 0 },
       { x: 620, y: 360, w: 220, h: 30, bounce: 1.1, angle: 0 },
@@ -52,6 +112,18 @@ const levels = [
     tooltip:
       "Bank tight curves off the mushroom bumpers. Same-color smashes pop friends right out of the swamp!",
     slingHint: { x: 140, y: 420 },
+    walls: [
+      { x: 80, y: 160, w: 110, h: 26 },
+      { x: 840, y: 180, w: 120, h: 26 },
+      { x: 860, y: 460, w: 80, h: 24 },
+      { x: 70, y: 420, w: 110, h: 24 },
+      { x: 450, y: 70, w: 260, h: 24 },
+      { x: 450, y: 520, w: 320, h: 26 },
+      { x: 250, y: 300, w: 28, h: 190 },
+      { x: 640, y: 280, w: 28, h: 220 },
+      { x: 220, y: 520, w: 160, h: 24 },
+      { x: 720, y: 70, w: 160, h: 24 },
+    ],
     bumpers: [
       { x: 420, y: 180, w: 240, h: 34, bounce: 1.2, angle: 0 },
       { x: 520, y: 420, w: 180, h: 30, bounce: 1.1, angle: 0 },
@@ -76,6 +148,18 @@ const levels = [
     tooltip:
       "Time big ricochets through lantern gates to cascade matches. Keep someone moving until every buddy is cheering!",
     slingHint: { x: 160, y: 420 },
+    walls: [
+      { x: 70, y: 220, w: 120, h: 30 },
+      { x: 70, y: 460, w: 130, h: 24 },
+      { x: 850, y: 260, w: 120, h: 28 },
+      { x: 840, y: 520, w: 120, h: 26 },
+      { x: 320, y: 70, w: 220, h: 26 },
+      { x: 620, y: 70, w: 220, h: 26 },
+      { x: 420, y: 520, w: 260, h: 26 },
+      { x: 320, y: 320, w: 30, h: 200 },
+      { x: 600, y: 320, w: 30, h: 210 },
+      { x: 500, y: 200, w: 230, h: 26 },
+    ],
     bumpers: [
       { x: 420, y: 220, w: 180, h: 30, bounce: 1.16, angle: 0 },
       { x: 520, y: 420, w: 160, h: 28, bounce: 1.12, angle: 0 },
@@ -182,6 +266,7 @@ class Game {
 
     this.shotsUsed = 0;
     this.levelComplete = false;
+    this.spawnGrace = 0;
 
     this.pointerId = null;
     this.pointerPos = { x: 0, y: 0 };
@@ -227,6 +312,7 @@ class Game {
   startLevel(index) {
     this.levelIndex = index;
     this.level = JSON.parse(JSON.stringify(levels[index]));
+    this.level.walls = this.level.walls || [];
     this.friends = this.level.friends.map((friend, id) => ({
       id,
       color: friend.color,
@@ -238,11 +324,16 @@ class Game {
       aiming: false,
       removed: false,
       isMoving: false,
+      pullAmount: 0,
+      pullAngle: 0,
+      roster: FRIEND_ROSTER[id % FRIEND_ROSTER.length],
+      faceFlip: id % 2 === 0 ? 1 : -1,
     }));
 
     this.effects = [];
     this.shotsUsed = 0;
     this.levelComplete = false;
+    this.spawnGrace = 0.45;
     this.pointerId = null;
     this.selectedFriend = null;
 
@@ -295,6 +386,8 @@ class Game {
     const dy = y - anchor.y;
     const pull = Math.min(Math.hypot(dx, dy), 170);
     const angle = Math.atan2(dy, dx) || 0;
+    friend.pullAmount = pull;
+    friend.pullAngle = angle;
     friend.dragPos = {
       x: anchor.x + Math.cos(angle) * pull,
       y: anchor.y + Math.sin(angle) * pull,
@@ -312,6 +405,8 @@ class Game {
 
     friend.aiming = false;
     friend.dragPos = { ...anchor };
+    friend.pullAmount = 0;
+    friend.pullAngle = 0;
     this.pointerId = null;
     this.selectedFriend = null;
 
@@ -365,10 +460,14 @@ class Game {
   }
 
   update(dt) {
+    if (this.spawnGrace > 0) {
+      this.spawnGrace = Math.max(0, this.spawnGrace - dt);
+    }
     this.friends.forEach((friend) => {
       if (friend.removed || friend.aiming) return;
       this.integrateFriend(friend, dt);
-      this.handleWalls(friend);
+      this.handleBounds(friend);
+      this.handleScatterWalls(friend);
       this.handleBumpers(friend);
     });
 
@@ -406,32 +505,62 @@ class Game {
     }
   }
 
-  handleWalls(friend) {
+  handleBounds(friend) {
     const radius = friend.radius;
 
     if (friend.pos.x - radius < 0) {
       friend.pos.x = radius;
       friend.vel.x *= -0.85;
-      this.fx.addShake(4);
-      this.sound.play("hit");
+      if (this.spawnGrace <= 0) {
+        this.fx.addShake(4);
+        this.sound.play("hit");
+      }
     } else if (friend.pos.x + radius > VIRTUAL_WIDTH) {
       friend.pos.x = VIRTUAL_WIDTH - radius;
       friend.vel.x *= -0.85;
-      this.fx.addShake(4);
-      this.sound.play("hit");
+      if (this.spawnGrace <= 0) {
+        this.fx.addShake(4);
+        this.sound.play("hit");
+      }
     }
 
     if (friend.pos.y - radius < 0) {
       friend.pos.y = radius;
       friend.vel.y *= -0.82;
-      this.fx.addShake(5);
-      this.sound.play("hit");
+      if (this.spawnGrace <= 0) {
+        this.fx.addShake(5);
+        this.sound.play("hit");
+      }
     } else if (friend.pos.y + radius > VIRTUAL_HEIGHT) {
       friend.pos.y = VIRTUAL_HEIGHT - radius;
       friend.vel.y *= -0.82;
-      this.fx.addShake(5);
-      this.sound.play("hit");
+      if (this.spawnGrace <= 0) {
+        this.fx.addShake(5);
+        this.sound.play("hit");
+      }
     }
+  }
+
+  handleScatterWalls(friend) {
+    this.level.walls.forEach((rect) => {
+      const collision = this.circleRectCollision(friend.pos, friend.radius, rect);
+      if (!collision) return;
+
+      friend.pos.x += collision.normal.x * collision.depth;
+      friend.pos.y += collision.normal.y * collision.depth;
+
+      const dot =
+        friend.vel.x * collision.normal.x + friend.vel.y * collision.normal.y;
+      friend.vel.x -= 2 * dot * collision.normal.x;
+      friend.vel.y -= 2 * dot * collision.normal.y;
+      friend.vel.x *= rect.bounce || 0.96;
+      friend.vel.y *= rect.bounce || 0.96;
+
+      if (this.spawnGrace <= 0) {
+        this.fx.addShake(3.5);
+        this.sound.play("hit");
+      }
+    });
   }
 
   handleBumpers(friend) {
@@ -449,8 +578,10 @@ class Game {
       friend.vel.x *= rect.bounce || 1.0;
       friend.vel.y *= rect.bounce || 1.0;
 
-      this.fx.addShake(6);
-      this.sound.play("hit");
+      if (this.spawnGrace <= 0) {
+        this.fx.addShake(6);
+        this.sound.play("hit");
+      }
     });
   }
 
@@ -533,7 +664,9 @@ class Game {
     b.vel.x = 0;
     b.vel.y = 0;
     this.fx.addShake(10);
-    this.sound.play("target");
+    if (this.spawnGrace <= 0) {
+      this.sound.play("target");
+    }
 
     const centerX = (a.pos.x + b.pos.x) / 2;
     const centerY = (a.pos.y + b.pos.y) / 2;
@@ -598,6 +731,7 @@ class Game {
 
     this.drawBackground(ctx);
     this.fx.apply(ctx);
+    this.drawWalls(ctx);
     this.drawBumpers(ctx);
     this.drawSlingHint(ctx);
     this.drawEffects(ctx);
@@ -642,6 +776,21 @@ class Game {
     });
   }
 
+  drawWalls(ctx) {
+    this.level.walls.forEach((wall) => {
+      ctx.save();
+      ctx.translate(wall.x, wall.y);
+      ctx.fillStyle = "rgba(43, 120, 116, 0.45)";
+      ctx.strokeStyle = "rgba(109, 255, 221, 0.6)";
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.rect(-wall.w / 2, -wall.h / 2, wall.w, wall.h);
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+    });
+  }
+
   drawSlingHint(ctx) {
     if (!this.level.slingHint) return;
     const sling = this.level.slingHint;
@@ -657,6 +806,7 @@ class Game {
   drawFriend(ctx, friend) {
     const renderPos = friend.aiming ? friend.dragPos : friend.pos;
     const color = COLORS[friend.color] || "#ffffff";
+    const roster = friend.roster || FRIEND_ROSTER[0];
 
     if (friend.aiming) {
       ctx.strokeStyle = `${color}80`;
@@ -670,36 +820,119 @@ class Game {
     ctx.save();
     ctx.translate(renderPos.x, renderPos.y);
 
-    const glow = ctx.createRadialGradient(0, 0, 0, 0, 0, friend.radius * 1.5);
+    const glow = ctx.createRadialGradient(0, 0, 0, 0, 0, friend.radius * 1.6);
     glow.addColorStop(0, `${color}`);
     glow.addColorStop(1, `${color}00`);
     ctx.globalAlpha = 0.7;
     ctx.fillStyle = glow;
     ctx.beginPath();
-    ctx.arc(0, 0, friend.radius * 1.6, 0, Math.PI * 2);
+    ctx.arc(0, 0, friend.radius * 1.55, 0, Math.PI * 2);
     ctx.fill();
 
     ctx.globalAlpha = 1;
-    const bodyGradient = ctx.createRadialGradient(-4, -6, 4, 0, 0, friend.radius * 1.1);
-    bodyGradient.addColorStop(0, "#ffffff");
-    bodyGradient.addColorStop(1, color);
+    const velocity = Math.hypot(friend.vel.x, friend.vel.y);
+    const pullStretch = friend.aiming
+      ? clamp(friend.pullAmount / 120, 0, 0.55)
+      : clamp(velocity / 650, 0, 0.4);
+    const stretch = 1 + pullStretch;
+    const squash = Math.max(0.55, 1 - pullStretch * 0.45);
+    let angle = 0;
+    if (friend.aiming && friend.pullAmount > 8) {
+      angle = (friend.pullAngle || 0) + Math.PI;
+    } else {
+      if (velocity > 30) {
+        angle = Math.atan2(friend.vel.y, friend.vel.x);
+      }
+    }
 
-    ctx.fillStyle = bodyGradient;
+    ctx.save();
+    ctx.rotate(angle);
+    const idleFlip =
+      !friend.aiming && velocity < 20
+        ? friend.faceFlip
+        : 1;
+    ctx.scale(stretch * idleFlip, squash);
+
+    // ears
+    ctx.fillStyle = roster.stripe;
     ctx.beginPath();
-    ctx.arc(0, 0, friend.radius, 0, Math.PI * 2);
+    ctx.ellipse(-friend.radius * 0.55, -friend.radius * 1.05, friend.radius * 0.42, friend.radius * 0.55, 0, 0, Math.PI * 2);
+    ctx.ellipse(friend.radius * 0.55, -friend.radius * 1.05, friend.radius * 0.42, friend.radius * 0.55, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = roster.accent;
+    ctx.beginPath();
+    ctx.ellipse(-friend.radius * 0.55, -friend.radius * 1.05, friend.radius * 0.24, friend.radius * 0.32, 0, 0, Math.PI * 2);
+    ctx.ellipse(friend.radius * 0.55, -friend.radius * 1.05, friend.radius * 0.24, friend.radius * 0.32, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.lineWidth = 4;
-    ctx.strokeStyle = "rgba(0, 0, 0, 0.35)";
+    // body base
+    ctx.fillStyle = roster.primary;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, friend.radius, friend.radius * 0.95, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // side stripes
+    ctx.fillStyle = roster.stripe;
+    ctx.beginPath();
+    ctx.ellipse(-friend.radius * 0.52, -friend.radius * 0.1, friend.radius * 0.35, friend.radius * 0.75, 0.25, 0, Math.PI * 2);
+    ctx.ellipse(friend.radius * 0.52, -friend.radius * 0.1, friend.radius * 0.35, friend.radius * 0.75, -0.25, 0, Math.PI * 2);
+    ctx.fill();
+
+    // face mask
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.ellipse(0, -friend.radius * 0.1, friend.radius * 0.85, friend.radius * 0.78, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // belly
+    ctx.fillStyle = roster.belly;
+    ctx.beginPath();
+    ctx.ellipse(0, friend.radius * 0.35, friend.radius * 0.6, friend.radius * 0.55, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // cheeks
+    ctx.fillStyle = `${color}aa`;
+    ctx.beginPath();
+    ctx.ellipse(-friend.radius * 0.45, friend.radius * 0.05, friend.radius * 0.32, friend.radius * 0.28, 0, 0, Math.PI * 2);
+    ctx.ellipse(friend.radius * 0.45, friend.radius * 0.05, friend.radius * 0.32, friend.radius * 0.28, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // eyes
+    ctx.fillStyle = roster.eye;
+    ctx.beginPath();
+    ctx.ellipse(-friend.radius * 0.28, -friend.radius * 0.18, friend.radius * 0.2, friend.radius * 0.26, 0, 0, Math.PI * 2);
+    ctx.ellipse(friend.radius * 0.28, -friend.radius * 0.18, friend.radius * 0.2, friend.radius * 0.26, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath();
+    ctx.ellipse(-friend.radius * 0.2, -friend.radius * 0.28, friend.radius * 0.09, friend.radius * 0.12, 0, 0, Math.PI * 2);
+    ctx.ellipse(friend.radius * 0.2, -friend.radius * 0.28, friend.radius * 0.09, friend.radius * 0.12, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // nose
+    ctx.fillStyle = roster.nose;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, friend.radius * 0.22, friend.radius * 0.18, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // smile
+    ctx.strokeStyle = roster.nose;
+    ctx.lineWidth = Math.max(2, friend.radius * 0.12);
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.arc(0, friend.radius * 0.05, friend.radius * 0.35, 0.2 * Math.PI, 0.8 * Math.PI);
     ctx.stroke();
+
+    ctx.restore();
 
     if (!friend.isMoving && !friend.aiming) {
       ctx.lineWidth = 2;
-      ctx.strokeStyle = `${color}80`;
+      ctx.strokeStyle = `${color}66`;
       ctx.setLineDash([6, 6]);
       ctx.beginPath();
-      ctx.arc(0, 0, friend.radius + 6, 0, Math.PI * 2);
+      ctx.arc(0, 0, friend.radius + 8, 0, Math.PI * 2);
       ctx.stroke();
+      ctx.setLineDash([]);
     }
 
     ctx.restore();

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bobble & Friends: Swamp Shot</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="game-shell">
+      <header class="hud">
+        <div class="hud__left">
+          <h1>Bobble &amp; Friends</h1>
+          <p class="level-name">Level 1: Misty Lily Pad</p>
+        </div>
+        <div class="hud__center">
+          <div class="shots">
+            Shots Left:
+            <span class="shots__value">0</span>
+          </div>
+          <p class="hud__note">
+            <strong>Tip:</strong> Drag any buddy, match colors, and clear the pool!
+          </p>
+          <div class="stars" aria-label="score stars">
+            <span class="star">☆</span>
+            <span class="star">☆</span>
+            <span class="star">☆</span>
+          </div>
+        </div>
+        <div class="hud__right">
+          <button class="hud-button" id="reset-level" type="button">Restart Level</button>
+          <button class="hud-button" id="next-level" type="button">Next Level</button>
+        </div>
+      </header>
+      <main class="playfield">
+        <canvas id="game"></canvas>
+        <div class="friends-panel" aria-label="Bobble's friends">
+          <h2>Adventure Crew</h2>
+          <ul class="friends-list">
+            <li>Bobble the Badger</li>
+            <li>Mila the Moon Moth</li>
+            <li>Rufus the River Otter</li>
+            <li>Tika the Tree Frog</li>
+            <li>Gogo the Glow Worm</li>
+          </ul>
+        </div>
+        <div class="tooltip" id="tooltip"></div>
+        <div class="level-complete" id="level-complete">
+          <div class="level-complete__card">
+            <h2>Level Complete!</h2>
+            <p class="level-complete__message"></p>
+            <p class="level-complete__stars"></p>
+            <button type="button" class="hud-button" id="replay-button">Play Again</button>
+            <button type="button" class="hud-button" id="advance-button">Next Challenge</button>
+          </div>
+        </div>
+      </main>
+      <footer class="footer">
+        <p>
+          Pull back any lounging friend, launch them across the swamp, and bump
+          matching colors together to send the whole crew cheering into the
+          jungle night.
+        </p>
+      </footer>
+    </div>
+    <script src="js/game.js" type="module"></script>
+  </body>
+</html>

@@ -18,24 +18,43 @@ const VIRTUAL_HEIGHT = 560;
 
 const levels = [
   {
+    name: "Shallow Shroomwalk",
+    shots: 5,
+    shotGoals: { three: 3, two: 4 },
+    sling: { x: 150, y: 430 },
+    bumpers: [
+      { x: 400, y: 360, w: 140, h: 170, bounce: 1.12, angle: 0, type: "mushroom" },
+      { x: 690, y: 250, w: 120, h: 200, bounce: 1.08, angle: 0, type: "mushroom" },
+    ],
+    gates: [],
+    targets: [
+      { x: 420, y: 140, r: 24, color: "aqua", cleared: false },
+      { x: 640, y: 440, r: 26, color: "orange", cleared: false },
+      { x: 780, y: 190, r: 26, color: "violet", cleared: false },
+    ],
+    tooltip:
+      "Warm up in the shallows. Use the springy mushroom walls to bank toward each glowing bud!",
+  },
+  {
     name: "Misty Lily Pad",
     shots: 6,
     shotGoals: { three: 4, two: 5 },
     sling: { x: 150, y: 420 },
     bumpers: [
-      { x: 420, y: 320, w: 120, h: 26, bounce: 1.2, angle: 0 },
-      { x: 650, y: 210, w: 30, h: 160, bounce: 1.05, angle: 0 },
+      { x: 380, y: 320, w: 140, h: 200, bounce: 1.18, angle: 0, type: "mushroom" },
+      { x: 650, y: 210, w: 130, h: 220, bounce: 1.1, angle: 0, type: "mushroom" },
     ],
     gates: [
-      { x: 520, y: 410, w: 24, h: 140, color: "orange", active: true },
+      { x: 520, y: 410, w: 26, h: 150, color: "orange", active: true },
     ],
     targets: [
       { x: 620, y: 460, r: 26, color: "orange", cleared: false },
       { x: 780, y: 160, r: 26, color: "aqua", cleared: false },
       { x: 520, y: 150, r: 26, color: "violet", cleared: false },
+      { x: 360, y: 220, r: 22, color: "aqua", cleared: false },
     ],
     tooltip:
-      "Fling Bobble across the swampy pool. Smash the glowing buds to open gates and finish the run!",
+      "Fling Bobble across the swampy pool. Smash the glowing buds to open gates and slip through the mist!",
   },
   {
     name: "Lantern Lagoon",
@@ -43,37 +62,64 @@ const levels = [
     shotGoals: { three: 4, two: 6 },
     sling: { x: 140, y: 420 },
     bumpers: [
-      { x: 360, y: 190, w: 220, h: 32, bounce: 1.25, angle: 0 },
-      { x: 540, y: 360, w: 180, h: 32, bounce: 1.1, angle: 0 },
-      { x: 760, y: 280, w: 32, h: 220, bounce: 1.05, angle: 0 },
+      { x: 360, y: 190, w: 220, h: 220, bounce: 1.25, angle: 0, type: "mushroom" },
+      { x: 540, y: 360, w: 180, h: 190, bounce: 1.14, angle: 0, type: "mushroom" },
+      { x: 760, y: 280, w: 120, h: 240, bounce: 1.08, angle: 0, type: "mushroom" },
     ],
     gates: [
-      { x: 520, y: 180, w: 26, h: 130, color: "violet", active: true },
-      { x: 700, y: 340, w: 26, h: 160, color: "orange", active: true },
+      { x: 520, y: 180, w: 26, h: 150, color: "violet", active: true },
+      { x: 700, y: 340, w: 28, h: 170, color: "orange", active: true },
     ],
     targets: [
       { x: 320, y: 450, r: 24, color: "aqua", cleared: false },
       { x: 460, y: 280, r: 24, color: "violet", cleared: false },
       { x: 660, y: 120, r: 28, color: "orange", cleared: false },
       { x: 820, y: 440, r: 26, color: "aqua", cleared: false },
+      { x: 600, y: 220, r: 22, color: "violet", cleared: false },
     ],
     tooltip:
-      "Hit matching buds to lower vine gates. Bounce off mushrooms to reroute your shot!",
+      "Hit matching buds to lower vine gates. Bounce off mushroom walls to reroute your shot!",
+  },
+  {
+    name: "Spore Spiral",
+    shots: 8,
+    shotGoals: { three: 5, two: 7 },
+    sling: { x: 170, y: 420 },
+    bumpers: [
+      { x: 340, y: 230, w: 180, h: 230, bounce: 1.26, angle: 0, type: "mushroom" },
+      { x: 560, y: 380, w: 200, h: 200, bounce: 1.18, angle: 0, type: "mushroom" },
+      { x: 760, y: 240, w: 150, h: 250, bounce: 1.12, angle: 0, type: "mushroom" },
+    ],
+    gates: [
+      { x: 500, y: 170, w: 30, h: 170, color: "orange", active: true },
+      { x: 700, y: 360, w: 30, h: 190, color: "aqua", active: true },
+    ],
+    targets: [
+      { x: 300, y: 460, r: 24, color: "orange", cleared: false },
+      { x: 480, y: 240, r: 24, color: "violet", cleared: false },
+      { x: 600, y: 120, r: 24, color: "orange", cleared: false },
+      { x: 730, y: 460, r: 26, color: "aqua", cleared: false },
+      { x: 820, y: 200, r: 24, color: "violet", cleared: false },
+      { x: 560, y: 320, r: 24, color: "aqua", cleared: false },
+    ],
+    tooltip:
+      "The mushroom walls twist into a spiral. Open matching gates to wind through the grotto in style!",
   },
   {
     name: "Glowroot Grotto",
-    shots: 8,
-    shotGoals: { three: 5, two: 7 },
+    shots: 9,
+    shotGoals: { three: 6, two: 8 },
     sling: { x: 160, y: 420 },
     bumpers: [
-      { x: 400, y: 210, w: 160, h: 32, bounce: 1.2, angle: 0 },
-      { x: 580, y: 440, w: 140, h: 32, bounce: 1.2, angle: 0 },
-      { x: 750, y: 220, w: 36, h: 200, bounce: 1.08, angle: 0 },
-      { x: 500, y: 320, w: 36, h: 200, bounce: 1.1, angle: 0 },
+      { x: 400, y: 210, w: 200, h: 240, bounce: 1.28, angle: 0, type: "mushroom" },
+      { x: 580, y: 440, w: 160, h: 220, bounce: 1.2, angle: 0, type: "mushroom" },
+      { x: 750, y: 220, w: 160, h: 260, bounce: 1.15, angle: 0, type: "mushroom" },
+      { x: 520, y: 320, w: 150, h: 230, bounce: 1.16, angle: 0, type: "mushroom" },
     ],
     gates: [
-      { x: 520, y: 120, w: 28, h: 160, color: "aqua", active: true },
-      { x: 700, y: 360, w: 28, h: 160, color: "violet", active: true },
+      { x: 520, y: 120, w: 30, h: 170, color: "aqua", active: true },
+      { x: 700, y: 360, w: 32, h: 190, color: "violet", active: true },
+      { x: 620, y: 260, w: 30, h: 180, color: "orange", active: true },
     ],
     targets: [
       { x: 320, y: 150, r: 24, color: "orange", cleared: false },
@@ -81,9 +127,11 @@ const levels = [
       { x: 820, y: 180, r: 26, color: "aqua", cleared: false },
       { x: 760, y: 460, r: 26, color: "orange", cleared: false },
       { x: 600, y: 240, r: 24, color: "violet", cleared: false },
+      { x: 460, y: 300, r: 24, color: "aqua", cleared: false },
+      { x: 680, y: 120, r: 22, color: "orange", cleared: false },
     ],
     tooltip:
-      "Bobble's whole crew is cheering now. Remember: long rebounds mean bigger shakes and faster clears!",
+      "Bobble's whole crew is cheering now. Use long rebounds and the glowing roots to clear every last spore!",
   },
 ];
 
@@ -557,19 +605,94 @@ class Game {
   }
 
   drawBackground(ctx) {
-    const gradient = ctx.createLinearGradient(0, 0, 0, VIRTUAL_HEIGHT);
-    gradient.addColorStop(0, "#083034");
-    gradient.addColorStop(1, "#021416");
-    ctx.fillStyle = gradient;
+    const duskGradient = ctx.createLinearGradient(0, 0, 0, VIRTUAL_HEIGHT);
+    duskGradient.addColorStop(0, "#04232a");
+    duskGradient.addColorStop(0.45, "#032023");
+    duskGradient.addColorStop(1, "#01090c");
+    ctx.fillStyle = duskGradient;
     ctx.fillRect(0, 0, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
 
-    ctx.strokeStyle = "rgba(102, 242, 199, 0.08)";
-    ctx.lineWidth = 1;
-    for (let y = 40; y < VIRTUAL_HEIGHT; y += 40) {
+    // Mist rising from the pool
+    const mistGradient = ctx.createLinearGradient(0, 0, 0, VIRTUAL_HEIGHT * 0.7);
+    mistGradient.addColorStop(0, "rgba(164, 246, 238, 0.12)");
+    mistGradient.addColorStop(0.4, "rgba(118, 216, 202, 0.08)");
+    mistGradient.addColorStop(1, "rgba(40, 82, 74, 0)");
+    ctx.fillStyle = mistGradient;
+    ctx.fillRect(0, 0, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
+
+    // Swamp pool
+    ctx.save();
+    ctx.translate(VIRTUAL_WIDTH / 2, VIRTUAL_HEIGHT * 0.68);
+    ctx.scale(1.4, 0.6);
+
+    const waterGradient = ctx.createRadialGradient(0, 0, 60, 0, 0, 320);
+    waterGradient.addColorStop(0, "#1a5148");
+    waterGradient.addColorStop(0.55, "#0f2f2a");
+    waterGradient.addColorStop(1, "#041312");
+    ctx.fillStyle = waterGradient;
+    ctx.beginPath();
+    ctx.arc(0, 0, 300, 0, Math.PI * 2);
+    ctx.fill();
+
+    const sludgeGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, 260);
+    sludgeGradient.addColorStop(0, "rgba(74, 138, 108, 0.65)");
+    sludgeGradient.addColorStop(0.45, "rgba(34, 84, 68, 0.55)");
+    sludgeGradient.addColorStop(1, "rgba(6, 25, 24, 0.85)");
+    ctx.fillStyle = sludgeGradient;
+    ctx.beginPath();
+    ctx.arc(0, 0, 240, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+
+    // Pool rim shimmer
+    ctx.save();
+    ctx.translate(VIRTUAL_WIDTH / 2, VIRTUAL_HEIGHT * 0.68);
+    ctx.scale(1.4, 0.6);
+    ctx.strokeStyle = "rgba(164, 238, 216, 0.14)";
+    ctx.lineWidth = 10;
+    ctx.beginPath();
+    ctx.arc(0, 0, 304, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+
+    // Murky ripples
+    ctx.save();
+    ctx.translate(VIRTUAL_WIDTH / 2, VIRTUAL_HEIGHT * 0.7);
+    ctx.scale(1.2, 0.55);
+    ctx.strokeStyle = "rgba(129, 214, 207, 0.12)";
+    ctx.lineWidth = 6;
+    for (let i = 0; i < 4; i += 1) {
       ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(VIRTUAL_WIDTH, y);
+      ctx.arc(0, 0, 210 + i * 36, 0, Math.PI * 2);
       ctx.stroke();
+    }
+    ctx.restore();
+
+    // Low-lying fog bands
+    ctx.strokeStyle = "rgba(173, 248, 234, 0.08)";
+    ctx.lineWidth = 5;
+    for (let y = VIRTUAL_HEIGHT * 0.15; y < VIRTUAL_HEIGHT * 0.65; y += 60) {
+      ctx.beginPath();
+      ctx.moveTo(-40, y + Math.sin(y * 0.05) * 6);
+      ctx.quadraticCurveTo(
+        VIRTUAL_WIDTH * 0.5,
+        y + Math.cos(y * 0.015) * 18,
+        VIRTUAL_WIDTH + 40,
+        y + Math.sin(y * 0.05 + 1.2) * 6
+      );
+      ctx.stroke();
+    }
+
+    // Distant spores
+    ctx.fillStyle = "rgba(192, 255, 241, 0.12)";
+    for (let i = 0; i < 45; i += 1) {
+      const px = ((i * 137) % VIRTUAL_WIDTH) + (i % 3) * 8;
+      const py = (i * 61) % Math.floor(VIRTUAL_HEIGHT * 0.55);
+      const size = 2 + ((i * 7) % 3);
+      ctx.beginPath();
+      ctx.arc(px, py + 30, size, 0, Math.PI * 2);
+      ctx.fill();
     }
   }
 
@@ -597,13 +720,17 @@ class Game {
     this.level.bumpers.forEach((bumper) => {
       ctx.save();
       ctx.translate(bumper.x, bumper.y);
-      ctx.fillStyle = "rgba(125, 246, 255, 0.25)";
-      ctx.strokeStyle = "rgba(125, 246, 255, 0.65)";
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.rect(-bumper.w / 2, -bumper.h / 2, bumper.w, bumper.h);
-      ctx.fill();
-      ctx.stroke();
+      if (bumper.type === "mushroom") {
+        this.drawMushroomWall(ctx, bumper);
+      } else {
+        ctx.fillStyle = "rgba(125, 246, 255, 0.25)";
+        ctx.strokeStyle = "rgba(125, 246, 255, 0.65)";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.rect(-bumper.w / 2, -bumper.h / 2, bumper.w, bumper.h);
+        ctx.fill();
+        ctx.stroke();
+      }
       ctx.restore();
     });
 
@@ -645,6 +772,121 @@ class Game {
       ctx.stroke();
       ctx.restore();
     });
+  }
+
+  drawMushroomWall(ctx, bumper) {
+    const width = bumper.w;
+    const height = bumper.h;
+    const capHeight = Math.min(height * 0.42, 120);
+    const stemWidth = Math.max(width * 0.58, width - 36);
+    const capWidth = width + Math.max(36, width * 0.35);
+    const stemTop = -height / 2 + capHeight * 0.45;
+    const stemBottom = height / 2 - 6;
+
+    // Soft glow aura
+    const glowRadiusX = capWidth * 0.65;
+    const glowRadiusY = height * 0.75;
+    ctx.save();
+    ctx.globalAlpha = 0.55;
+    ctx.fillStyle = "rgba(118, 214, 255, 0.22)";
+    ctx.beginPath();
+    ctx.ellipse(0, 0, glowRadiusX, glowRadiusY, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    // Stem
+    const stemGradient = ctx.createLinearGradient(0, stemTop, 0, stemBottom + 30);
+    stemGradient.addColorStop(0, "#43225b");
+    stemGradient.addColorStop(0.55, "#2f1641");
+    stemGradient.addColorStop(1, "#261032");
+
+    ctx.fillStyle = stemGradient;
+    ctx.beginPath();
+    ctx.moveTo(-stemWidth / 2, stemTop);
+    ctx.quadraticCurveTo(-stemWidth * 0.75, stemBottom * 0.1, -stemWidth / 2 + 10, stemBottom - 20);
+    ctx.quadraticCurveTo(0, stemBottom + 28, stemWidth / 2 - 10, stemBottom - 20);
+    ctx.quadraticCurveTo(stemWidth * 0.75, stemBottom * 0.1, stemWidth / 2, stemTop);
+    ctx.closePath();
+    ctx.fill();
+
+    // Stem highlights
+    ctx.strokeStyle = "rgba(199, 166, 255, 0.28)";
+    ctx.lineWidth = Math.max(4, width * 0.06);
+    ctx.beginPath();
+    ctx.moveTo(-stemWidth * 0.18, stemTop + 18);
+    ctx.lineTo(-stemWidth * 0.08, stemBottom - 24);
+    ctx.moveTo(stemWidth * 0.14, stemTop + 24);
+    ctx.lineTo(stemWidth * 0.05, stemBottom - 28);
+    ctx.stroke();
+
+    // Cap
+    const capTop = -height / 2 - capHeight * 0.1;
+    const capGradient = ctx.createLinearGradient(0, capTop - 15, 0, stemTop + capHeight * 0.8);
+    capGradient.addColorStop(0, "#ff80f5");
+    capGradient.addColorStop(0.45, "#be7bff");
+    capGradient.addColorStop(1, "#6d3ddc");
+
+    ctx.fillStyle = capGradient;
+    ctx.beginPath();
+    ctx.moveTo(-capWidth / 2, stemTop + capHeight * 0.2);
+    ctx.quadraticCurveTo(-capWidth * 0.45, capTop, 0, capTop + capHeight * 0.05);
+    ctx.quadraticCurveTo(capWidth * 0.45, capTop, capWidth / 2, stemTop + capHeight * 0.2);
+    ctx.quadraticCurveTo(0, stemTop + capHeight, -capWidth / 2, stemTop + capHeight * 0.2);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = "rgba(219, 199, 255, 0.55)";
+    ctx.stroke();
+
+    // Cap underside shadow
+    ctx.fillStyle = "rgba(24, 9, 38, 0.55)";
+    ctx.beginPath();
+    ctx.moveTo(-capWidth / 2 + 12, stemTop + capHeight * 0.25);
+    ctx.quadraticCurveTo(0, stemTop + capHeight * 0.85, capWidth / 2 - 12, stemTop + capHeight * 0.25);
+    ctx.quadraticCurveTo(0, stemTop + capHeight * 0.6, -capWidth / 2 + 12, stemTop + capHeight * 0.25);
+    ctx.fill();
+
+    // Bioluminescent spots
+    const spotColor = "rgba(255, 255, 255, 0.35)";
+    const spots = [
+      { x: -capWidth * 0.26, y: stemTop + capHeight * 0.3, rx: capHeight * 0.18, ry: capHeight * 0.12 },
+      { x: capWidth * 0.18, y: stemTop + capHeight * 0.15, rx: capHeight * 0.16, ry: capHeight * 0.1 },
+      { x: -capWidth * 0.05, y: stemTop + capHeight * 0.55, rx: capHeight * 0.22, ry: capHeight * 0.15 },
+      { x: capWidth * 0.32, y: stemTop + capHeight * 0.55, rx: capHeight * 0.12, ry: capHeight * 0.09 },
+    ];
+
+    spots.forEach((spot, index) => {
+      ctx.save();
+      ctx.globalAlpha = 0.6 - index * 0.1;
+      ctx.fillStyle = spotColor;
+      ctx.beginPath();
+      ctx.ellipse(spot.x, spot.y, spot.rx, spot.ry, -0.35 + index * 0.22, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    });
+
+    // Floating spores (decorative dots)
+    ctx.fillStyle = "rgba(173, 255, 226, 0.35)";
+    for (let i = 0; i < 5; i += 1) {
+      const angle = (i / 5) * Math.PI * 2;
+      const radius = glowRadiusX * 0.65;
+      const px = Math.cos(angle) * radius * 0.35;
+      const py = -height * 0.25 + Math.sin(angle) * glowRadiusY * 0.18;
+      const size = 4 + i * 0.8;
+      ctx.beginPath();
+      ctx.arc(px, py, size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Mist pooling at the base
+    const mistGradient = ctx.createLinearGradient(0, stemBottom - 30, 0, stemBottom + 40);
+    mistGradient.addColorStop(0, "rgba(158, 255, 238, 0.25)");
+    mistGradient.addColorStop(1, "rgba(26, 60, 54, 0)");
+    ctx.fillStyle = mistGradient;
+    ctx.beginPath();
+    ctx.ellipse(0, stemBottom - 6, width * 0.95, 46, 0, 0, Math.PI * 2);
+    ctx.fill();
   }
 
   drawBall(ctx) {
